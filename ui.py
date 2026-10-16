@@ -17,7 +17,8 @@ CSS = """
   --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
 }
 html, body, .stApp, [data-testid="stAppViewContainer"]{background:var(--bg)!important;color:var(--ink);font-family:var(--sans)}
-.stApp p, .stApp li, .stApp label, .stApp span, .stApp div{font-family:var(--sans)}
+.stApp p, .stApp li, .stApp label, .stApp input, .stApp textarea, .stApp button{font-family:var(--sans)}
+[data-testid="stIconMaterial"], .material-symbols-rounded, .material-icons{font-family:"Material Symbols Rounded"!important}
 #MainMenu, footer, [data-testid="stToolbar"], [data-testid="stDecoration"]{display:none!important}
 header[data-testid="stHeader"]{background:transparent}
 .block-container{padding-top:2.2rem!important;padding-bottom:4rem!important;max-width:1280px}
