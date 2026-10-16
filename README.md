@@ -34,6 +34,7 @@ Put the same settings in `.streamlit/secrets.toml` (git-ignored), or as environm
 
 ```
 streamlit_app.py     password gate, pages, spend caps
+ui.py                stylesheet and small HTML building blocks
 stock_chat.py        Claude tool-use loop over the stock tools
 stock_server.py      the same tools as an MCP server (stdio) for Claude Desktop
 stock/               synthetic messy export and the cleaning step
