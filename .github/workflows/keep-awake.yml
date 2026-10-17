@@ -1,0 +1,34 @@
+name: Keep demo awake
+
+on:
+  schedule:
+    - cron: "17 */6 * * *"   # every 6 hours
+  workflow_dispatch:          # lets you run it by hand from the Actions tab
+
+jobs:
+  visit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install a headless browser
+        run: npm i playwright@1.48.2 && npx playwright install --with-deps chromium
+      - name: Open the app like a visitor (and wake it if it is asleep)
+        run: |
+          cat > wake.mjs <<'JS'
+          import { chromium } from 'playwright';
+          const browser = await chromium.launch();
+          const page = await browser.newPage();
+          await page.goto('https://recommerceaidemos.streamlit.app/', { waitUntil: 'domcontentloaded', timeout: 120000 });
+          const wake = page.getByRole('button', { name: /get this app back up/i });
+          if (await wake.isVisible({ timeout: 15000 }).catch(() => false)) {
+            await wake.click();
+            console.log('App was asleep: wake-up clicked');
+          }
+          await page.waitForTimeout(60000);   // stay a minute so it counts as a real visit
+          console.log('Visited the app');
+          await browser.close();
+          JS
+          node wake.mjs
