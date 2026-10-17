@@ -98,6 +98,8 @@ h1,h2,h3{font-family:var(--sans)!important;color:var(--ink);letter-spacing:-.01e
 .casehead{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:10px}
 .empty{border:1px dashed var(--line);border-radius:14px;padding:26px;text-align:center;color:var(--muted);background:var(--surface)}
 .login{max-width:440px;margin:8vh auto 0}
+.disclaimer{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:13.5px;line-height:1.5;color:var(--muted);margin:4px 0 8px}
+.disclaimer b{color:var(--ink)}
 </style>
 """
 
