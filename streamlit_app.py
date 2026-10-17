@@ -134,14 +134,10 @@ def gate():
             st.stop()
         with st.form("login", border=True):
             entered = st.text_input("Password", type="password", key="pw", placeholder="Password you were given")
-            ui.html('<div class="disclaimer"><b>Demo only.</b> These prototypes are built on an illustrative, '
-                    'synthetic dataset: the partners, devices, prices, stock and emails are invented. They do not use '
-                    'or represent any company\'s real data, systems or results, and nothing here is sent to anyone. '
-                    'Figures shown are for demonstration only.</div>')
-            agreed = st.checkbox("I understand that this is a demo built on an illustrative dataset", key="agree")
+            agreed = st.checkbox("I understand, these prototypes are built on an illustrative, synthetic dataset: the partners, devices, prices, stock and emails are invented. They do not use or represent any company's real data, systems or results, and nothing here is sent to anyone and will not reproduce.", key="agree")
             if st.form_submit_button("Open the demos", type="primary", use_container_width=True):
                 if not agreed:
-                    ui.html('<div class="status off">Please tick the box to confirm you have read the note above.</div>')
+                    ui.html('<div class="status off">Please tick the box to confirm before opening the demos.</div>')
                 elif hmac.compare_digest(entered.encode(), pw.encode()):
                     st.session_state.disclaimer_accepted = time.strftime("%Y-%m-%d %H:%M")
                     st.session_state.authed = True
