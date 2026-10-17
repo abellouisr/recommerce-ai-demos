@@ -172,7 +172,7 @@ def go(page):
 
 
 # ------------------------------------------------------------------ sidebar
-PAGES = {"Home": "Start here", "Dispute Copilot": "Partner disputes", "Stock Lookup": "Stock questions"}
+PAGES = {"Home": "Dashboard", "Dispute Copilot": "Partner disputes", "Stock Lookup": "Stock questions"}
 
 
 def sidebar():
