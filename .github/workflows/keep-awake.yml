@@ -1,33 +1,60 @@
-name: Keep demo awake
-
+name: Keep Streamlit app awake
+ 
 on:
   schedule:
-    - cron: "17 */6 * * *"   # every 6 hours
+    - cron: "17 */8 * * *"   # every 8 hours
+    - cron: "17 0 1 * *"     # 1st of each month: keepalive commit
   workflow_dispatch:          # lets you run it by hand from the Actions tab
-
+ 
 jobs:
-  visit:
+  wake:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-      - name: Install a headless browser
-        run: npm i playwright@1.48.2 && npx playwright install --with-deps chromium
-      - name: Open the app like a visitor (and wake it if it is asleep)
+      - name: Install Playwright
         run: |
-          cat > wake.mjs <<'JS'
-          import { chromium } from 'playwright';
-          const browser = await chromium.launch();
-          const page = await browser.newPage();
-          await page.goto('https://recommerceaidemos.streamlit.app/', { waitUntil: 'domcontentloaded', timeout: 120000 });
-          const wake = page.getByRole('button', { name: /get this app back up/i });
-          if (await wake.isVisible({ timeout: 15000 }).catch(() => false)) {
-            await wake.click();
-            console.log('App was asleep: wake-up clicked');
-          }
-          await page.waitForTimeout(60000);   // stay a minute so it counts as a real visit
+          npm init -y >/dev/null
+          npm install playwright@1.47.2
+          npx playwright install --with-deps chromium
+ 
+      - name: Open the app and wake it if asleep
+        env:
+          APP_URL: https://recommerceaidemos.streamlit.app/
+        run: |
+          cat > wake.js <<'EOF'
+          const { chromium } = require('playwright');
+          (async () => {
+            const browser = await chromium.launch();
+            const page = await browser.newPage();
+            await page.goto(process.env.APP_URL, { waitUntil: 'domcontentloaded', timeout: 60000 });
+            await page.waitForTimeout(8000);
+            const btn = page.getByRole('button', { name: /get this app back up/i });
+            if (await btn.count()) {
+              console.log('App was asleep - clicking wake button');
+              await btn.first().click();
+              await page.waitForTimeout(60000);
+            } else {
+              console.log('App is awake');
+            }
+            await browser.close();
+          })();
+          EOF
+          node wake.js
+ 
+  # GitHub pauses scheduled workflows after 60 days without repo activity.
+  # This empty commit once a month keeps the schedule alive.
+  keepalive:
+    if: github.event.schedule == '17 0 1 * *'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          git config user.name "keepalive-bot"
+          git config user.email "keepalive@users.noreply.github.com"
+          git commit --allow-empty -m "keepalive"
+          git push
           console.log('Visited the app');
           await browser.close();
           JS
